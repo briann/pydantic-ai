@@ -74,7 +74,7 @@ async def test_stdio_server_with_cwd():
 def test_http_server():
     http_server = MCPServerHTTP(url='http://localhost:8000/sse')
     assert http_server.url == 'http://localhost:8000/sse'
-    assert http_server._get_log_level() is None  # pyright: ignore[reportPrivateUsage]
+    assert http_server.log_level is None
 
 
 def test_http_server_with_header_and_timeout():
@@ -89,7 +89,7 @@ def test_http_server_with_header_and_timeout():
     assert http_server.headers is not None and http_server.headers['my-custom-header'] == 'my-header-value'
     assert http_server.timeout == 10
     assert http_server.sse_read_timeout == 100
-    assert http_server._get_log_level() == 'info'  # pyright: ignore[reportPrivateUsage]
+    assert http_server.log_level == 'info'
 
 
 def test_http_server_with_timedelta_arguments():
@@ -104,7 +104,7 @@ def test_http_server_with_timedelta_arguments():
     assert http_server.headers is not None and http_server.headers['my-custom-header'] == 'my-header-value'
     assert http_server.timeout == 10
     assert http_server.sse_read_timeout == 100
-    assert http_server._get_log_level() == 'info'  # pyright: ignore[reportPrivateUsage]
+    assert http_server.log_level == 'info'
 
 
 @pytest.mark.vcr()
@@ -225,7 +225,7 @@ async def test_agent_with_server_not_running(openai_api_key: str):
 
 async def test_log_level_unset():
     server = MCPServerStdio('python', ['-m', 'tests.mcp_server'])
-    assert server._get_log_level() is None  # pyright: ignore[reportPrivateUsage]
+    assert server.log_level is None
     async with server:
         tools = await server.list_tools()
         assert len(tools) == 10
@@ -237,7 +237,7 @@ async def test_log_level_unset():
 
 async def test_log_level_set():
     server = MCPServerStdio('python', ['-m', 'tests.mcp_server'], log_level='info')
-    assert server._get_log_level() == 'info'  # pyright: ignore[reportPrivateUsage]
+    assert server.log_level == 'info'
     async with server:
         result = await server.call_tool('get_log_level', {})
         assert result == snapshot('info')
